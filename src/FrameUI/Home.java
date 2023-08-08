@@ -14,7 +14,13 @@ import javax.swing.JFrame;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.JOptionPane;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
+import java.util.Locale;
 
 /**
  *
@@ -25,6 +31,21 @@ public class Home extends javax.swing.JFrame {
     /**
      * Creates new form Home
      */
+    private String bizzname = "";
+    private int years = 0;
+    private String ownername = "";
+    private String icnumber = "";
+    private String phoneno = "";
+    private String email = "";
+    private String bizzaddress = "";
+    private String bizzcategory = "";
+    private String bentukperniagaan = "";
+    private String cawangan = "";
+    private String ssm = "";
+    private File folder;
+    private String expirydate = "";
+    private String entrymonth = "";
+
     public Home() {
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -63,7 +84,6 @@ public class Home extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         robdisplaybtn = new javax.swing.JButton();
-        ammenddisplaybtn = new javax.swing.JButton();
         resetbtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -113,7 +133,7 @@ public class Home extends javax.swing.JFrame {
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Easy to use! Just three steps");
 
-        robdisplaybtn.setText("New R.O.B");
+        robdisplaybtn.setText("New R.O.B / Ammendment");
         robdisplaybtn.setEnabled(false);
         robdisplaybtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -121,16 +141,13 @@ public class Home extends javax.swing.JFrame {
             }
         });
 
-        ammenddisplaybtn.setText("Ammendment");
-        ammenddisplaybtn.setEnabled(false);
-        ammenddisplaybtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ammenddisplaybtnActionPerformed(evt);
-            }
-        });
-
         resetbtn.setText("Reset");
         resetbtn.setEnabled(false);
+        resetbtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetbtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -149,14 +166,11 @@ public class Home extends javax.swing.JFrame {
                                 .addGap(37, 37, 37)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(openfolderbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(robdisplaybtn, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(ammenddisplaybtn, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addComponent(robdisplaybtn, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGap(240, 240, 240)
                                 .addComponent(jLabel4)))
-                        .addGap(0, 197, Short.MAX_VALUE))
+                        .addGap(0, 219, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(resetbtn)))
@@ -175,8 +189,7 @@ public class Home extends javax.swing.JFrame {
                 .addGap(38, 38, 38)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(robdisplaybtn)
-                    .addComponent(ammenddisplaybtn))
+                    .addComponent(robdisplaybtn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 121, Short.MAX_VALUE)
                 .addComponent(resetbtn)
                 .addContainerGap())
@@ -204,7 +217,7 @@ public class Home extends javax.swing.JFrame {
         String escapedKeyword = Pattern.quote(keyword);
         if (doubledot == true) {
             regex = "(?m)^" + escapedKeyword + "\\s*:(.*)$";
-        }else{
+        } else {
             regex = "(?m)^" + escapedKeyword + "\\s*(.*)$";
         }
         Pattern pattern = Pattern.compile(regex);
@@ -218,35 +231,53 @@ public class Home extends javax.swing.JFrame {
         return value;
     }
 
-    private void openfolderbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openfolderbtnActionPerformed
-        JFrame frame = new JFrame();
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        int option = fileChooser.showOpenDialog(frame);
-        if (option == JFileChooser.APPROVE_OPTION) {
-            try {
-                File folder = fileChooser.getSelectedFile();
-                System.out.println("Folder: " + folder.getName());
+    private String valueFinderDesc(String startkeyword, String endKeyword, File docs) throws IOException {
+        String desc = "";
+        if (docs.isFile()) {
+            PDDocument document = PDDocument.load(docs);
 
-                if (folder.exists() && folder.isDirectory()) {
-                    // Get all the files in the folder
-                    File[] files = folder.listFiles();
-                    String[] matchWords = {"BIS_INFO", "BORANG_A", "CERT"};
+            // Initialize the PDFTextStripper
+            PDFTextStripper stripper = new PDFTextStripper();
 
-                    // Check if any files are found in the folder
-                    if (files != null && files.length > 0) {
-                        // Create a list to store the matched files
-                        List<File> matchedFiles = new ArrayList<>();
+            // Extract the entire text from the PDF
+            String text = stripper.getText(document);
 
-                        for (File file : files) {
-                            String fileName = file.getName();
-                            for (String matchWord : matchWords) {
-                                // Use regular expression to match the file names with the match words
-                                if (fileName.matches(".*" + matchWord + ".*")) {
-                                    matchedFiles.add(file);
-                                }
+            // Find the index of the start and end keywords
+            int startIndex = text.indexOf(startkeyword);
+            int endIndex = text.indexOf(endKeyword);
+
+            if (startIndex != -1 && endIndex != -1) {
+                // Capture the description between the keywords
+                desc = text.substring(startIndex + startkeyword.length(), endIndex).trim();
+            }
+            document.close();
+        }
+        return desc;
+    }
+
+    private void readPDF(File folder) {
+        try {
+            this.folder = folder;
+
+            if (folder.exists() && folder.isDirectory()) {
+                // Get all the files in the folder
+                File[] files = folder.listFiles();
+                String[] matchWords = {"BIS_INFO", "BORANG_A", "CERT"};
+
+                // Check if any files are found in the folder
+                if (files != null && files.length > 0) {
+                    // Create a list to store the matched files
+                    List<File> matchedFiles = new ArrayList<>();
+
+                    for (File file : files) {
+                        String fileName = file.getName();
+                        for (String matchWord : matchWords) {
+                            // Use regular expression to match the file names with the match words
+                            if (fileName.matches(".*" + matchWord + ".*")) {
+                                matchedFiles.add(file);
                             }
                         }
+                    }
 
 //                        // Print the matched files
 //                        if (!matchedFiles.isEmpty()) {
@@ -257,59 +288,124 @@ public class Home extends javax.swing.JFrame {
 //                        } else {
 //                            System.out.println("No files found with the specified match words in the folder.");
 //                        }
+                    File bisInfoFile = null;
+                    File borangAFile = null;
+                    File certFile = null;
 
-                        File bisInfoFile = null;
-                        File borangAFile = null;
-                        File certFile = null;
-
-                        for (File file : matchedFiles) {
-                            String fileName = file.getName();
-                            if (fileName.contains("BIS_INFO")) {
-                                bisInfoFile = file;
-                            } else if (fileName.contains("BORANG_A")) {
-                                borangAFile = file;
-                            } else if (fileName.contains("CERT")) {
-                                certFile = file;
-                            }
+                    for (File file : matchedFiles) {
+                        String fileName = file.getName();
+                        if (fileName.contains("BIS_INFO")) {
+                            bisInfoFile = file;
+                        } else if (fileName.contains("BORANG_A")) {
+                            borangAFile = file;
+                        } else if (fileName.contains("CERT")) {
+                            certFile = file;
                         }
-
-                        // Now you can use bisInfoFile, borangAFile, and certFile as needed
-                        if (bisInfoFile != null) {
-                            //System.out.println("BIS_INFO File: " + bisInfoFile.getName());
-                            String namaperniagaan = valueFinder("NAMA PERNIAGAAN", bisInfoFile, true);
-                            String nopendaftaran = valueFinder("NO PENDAFTARAN", bisInfoFile, true);
-                            String fullname = valueFinder("NAMA", bisInfoFile, true);
-                            String nokp = valueFinder("NO K/P (BARU)", bisInfoFile, true);
-                            System.out.println("GET VALUE FULLNAME: " + fullname);
-                            System.out.println("GET VALUE KP: " + nokp);
-                            System.out.println("GET VALUE PENDAFTARAN: " + nopendaftaran);
-                            System.out.println("GET VALUE NAMA PERNIAGAAN: " + namaperniagaan);
-                        }
-                        if (borangAFile != null) {
-                            String email = valueFinder("* E-MAIL ", borangAFile, false);
-                            System.out.println("GET VALUE EMAIL: " + email);
-                        }
-                        if (certFile != null) {
-                            //System.out.println("CERT File: " + certFile.getName());
-                        }
-
-                    } else {
-                        System.out.println("No files found in the folder.");
                     }
-                } else {
-                    System.out.println("The specified folder does not exist or is not a directory.");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(null, "An error occured when reading PDF files", "Error read PDF", JOptionPane.ERROR_MESSAGE);
-            }
 
-            robdisplaybtn.setEnabled(true);
-            ammenddisplaybtn.setEnabled(true);
-            resetbtn.setEnabled(true);
-        } else {
-            System.out.println("Cancelled");
+                    // Now you can use bisInfoFile, borangAFile, and certFile as needed
+                    if (bisInfoFile != null) {
+                        //System.out.println("BIS_INFO File: " + bisInfoFile.getName());
+                        String namaperniagaan = valueFinder("NAMA PERNIAGAAN", bisInfoFile, true);
+                        String nopendaftaran = valueFinder("NO PENDAFTARAN", bisInfoFile, true);
+                        String bentukperniagaan = valueFinder("BENTUK PERNIAGAAN", bisInfoFile, true);
+                        String fullname = valueFinder("NAMA", bisInfoFile, true);
+                        String nokp = valueFinder("NO K/P (BARU)", bisInfoFile, true);
+                        String alamat = valueFinderDesc("ALAMAT UTAMA PERNIAGAAN : ", "BENTUK PERNIAGAAN", bisInfoFile);
+                        String tarikhpendaftaran = valueFinder("TARIKH MULA BERNIAGA ", bisInfoFile, true);
+                        String tarikhluputpendaftaran = valueFinder("TARIKH LUPUT  PENDAFTARAN", bisInfoFile, true);
+                        String descbizz = valueFinderDesc("** JENIS PERNIAGAAN **", "** MAKLUMAT CAWANGAN **", bisInfoFile);
+                        String cawangan = valueFinderDesc("** MAKLUMAT CAWANGAN **", "UserID", bisInfoFile);
+
+                        if ((tarikhpendaftaran != null && !tarikhpendaftaran.trim().isEmpty()) && (tarikhluputpendaftaran != null && !tarikhluputpendaftaran.trim().isEmpty())) {
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+                            Date date1 = dateFormat.parse(tarikhpendaftaran);
+                            Date date2 = dateFormat.parse(tarikhluputpendaftaran);
+
+                            int year1 = Integer.parseInt(dateFormat.format(date1).split("-")[2]);
+                            int year2 = Integer.parseInt(dateFormat.format(date2).split("-")[2]);
+
+                            int yearDiff = Math.abs(year2 - year1);
+                            this.years = yearDiff;
+                        }
+//                            System.out.println("GET VALUE FULLNAME: " + fullname);
+//                            System.out.println("GET VALUE KP: " + nokp);
+//                            System.out.println("GET VALUE PENDAFTARAN: " + nopendaftaran);
+//                            System.out.println("GET VALUE NAMA PERNIAGAAN: " + namaperniagaan);
+//                            System.out.println("ALAMAT 1: " + alamat1);
+
+                        // Create a Pattern object
+                        Pattern pattern = Pattern.compile("\\((.*?)\\)");
+
+                        // Create a Matcher object
+                        Matcher matcher = pattern.matcher(nopendaftaran);
+
+                        // Find and print the text within brackets
+                        while (matcher.find()) {
+                            String extractedText = matcher.group(1);
+                            this.ssm = extractedText;
+                        }
+
+                        this.bizzname = namaperniagaan;
+                        this.ownername = fullname;
+                        this.icnumber = nokp;
+                        this.bizzaddress = alamat;
+                        this.bizzcategory = descbizz;
+                        this.bentukperniagaan = bentukperniagaan;
+                        this.cawangan = cawangan;
+                        this.expirydate = tarikhluputpendaftaran;
+
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                        LocalDate date = LocalDate.parse(tarikhpendaftaran, formatter);
+
+                        String monthName = date.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
+                        int year = date.getYear();
+
+                        this.entrymonth = monthName + " " + year;
+
+                    }
+                    if (borangAFile != null) {
+                        String email = valueFinder("* E-MAIL ", borangAFile, false);
+                        String phoneno = valueFinder("* TELEPHONE ", borangAFile, false);
+//                            System.out.println("GET VALUE EMAIL: " + email);
+                        this.email = email;
+                        this.phoneno = phoneno;
+
+                    }
+                    robdisplaybtn.setEnabled(true);
+                    resetbtn.setEnabled(true);
+
+                } else {
+                    JOptionPane.showMessageDialog(null, "No file found in this folder", "Folder selection", JOptionPane.INFORMATION_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "The specified folder does not exist or is not a directory.", "Folder selection", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "An error occured when reading PDF files", "Error read PDF", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void importPdf(boolean reusefolder) {
+        if (reusefolder != true) {
+            JFrame frame = new JFrame();
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            int option = fileChooser.showOpenDialog(frame);
+            if (option == JFileChooser.APPROVE_OPTION) {
+                File folder = fileChooser.getSelectedFile();
+                readPDF(folder);
+            } else {
+                JOptionPane.showMessageDialog(null, "User cancelled", "Folder selection", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } else {
+            readPDF(folder);
+        }
+    }
+    private void openfolderbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openfolderbtnActionPerformed
+        importPdf(false);
     }//GEN-LAST:event_openfolderbtnActionPerformed
 
     NewRob robui;
@@ -317,20 +413,45 @@ public class Home extends javax.swing.JFrame {
         if (robui != null) {
             robui.setVisible(true);
         } else {
-            robui = new NewRob();
+            robui = new NewRob(bizzname, years, ownername, icnumber, phoneno, email, bizzaddress, bizzcategory, bentukperniagaan, cawangan, ssm, expirydate, entrymonth);
         }
     }//GEN-LAST:event_robdisplaybtnActionPerformed
+    public static int showConfirmationDialog(String message) {
+        return JOptionPane.showConfirmDialog(null, message, "Clear files", JOptionPane.YES_NO_OPTION);
+    }
+    private void resetbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetbtnActionPerformed
+        robui.dispose();
+        robui = null;
 
-    private void ammenddisplaybtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ammenddisplaybtnActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_ammenddisplaybtnActionPerformed
+        int result = showConfirmationDialog("Are you want to clear all files in selected folders?\nThis action can't be undone");
+
+        if (result == JOptionPane.YES_OPTION) {
+            for (File file : this.folder.listFiles()) {
+                if (!file.isDirectory()) {
+                    file.delete();
+                }
+            }
+            int result2 = showConfirmationDialog("Do you want to reuse same folder?");
+            if (result2 == JOptionPane.YES_OPTION) {
+                int result3 = showConfirmationDialog("Put all contents in that folder and click Yes");
+                if (result3 == JOptionPane.YES_OPTION) {
+                    importPdf(true);
+                } else {
+                    robdisplaybtn.setEnabled(false);
+                    resetbtn.setEnabled(false);
+                }
+            } else {
+                robdisplaybtn.setEnabled(false);
+                resetbtn.setEnabled(false);
+            }
+        }
+    }//GEN-LAST:event_resetbtnActionPerformed
 
     /**
      * @param args the command line arguments
      */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton ammenddisplaybtn;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
