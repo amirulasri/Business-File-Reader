@@ -58,11 +58,7 @@
                                   <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="openfolderbtn" min="-2" pref="124" max="-2" attributes="0"/>
-                                      <Group type="102" attributes="0">
-                                          <Component id="robdisplaybtn" min="-2" pref="115" max="-2" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="ammenddisplaybtn" min="-2" pref="119" max="-2" attributes="0"/>
-                                      </Group>
+                                      <Component id="robdisplaybtn" min="-2" pref="199" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
@@ -70,7 +66,7 @@
                                   <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace min="0" pref="197" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="219" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -96,7 +92,6 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="robdisplaybtn" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="ammenddisplaybtn" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="121" max="32767" attributes="0"/>
                   <Component id="resetbtn" min="-2" max="-2" attributes="0"/>
@@ -192,20 +187,11 @@
         </Component>
         <Component class="javax.swing.JButton" name="robdisplaybtn">
           <Properties>
-            <Property name="text" type="java.lang.String" value="New R.O.B"/>
+            <Property name="text" type="java.lang.String" value="New R.O.B / Ammendment"/>
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="robdisplaybtnActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="ammenddisplaybtn">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Ammendment"/>
-            <Property name="enabled" type="boolean" value="false"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ammenddisplaybtnActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="resetbtn">
@@ -213,6 +199,9 @@
             <Property name="text" type="java.lang.String" value="Reset"/>
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="resetbtnActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
