@@ -361,7 +361,7 @@ public class Home extends javax.swing.JFrame {
 
                         String monthName = date.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
                         int year = date.getYear();
-                        
+
                         this.entrymonth = monthName + " " + year;
 
                     }
@@ -373,6 +373,8 @@ public class Home extends javax.swing.JFrame {
                         this.phoneno = phoneno;
 
                     }
+                    robdisplaybtn.setEnabled(true);
+                    resetbtn.setEnabled(true);
 
                 } else {
                     JOptionPane.showMessageDialog(null, "No file found in this folder", "Folder selection", JOptionPane.INFORMATION_MESSAGE);
@@ -384,9 +386,6 @@ public class Home extends javax.swing.JFrame {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "An error occured when reading PDF files", "Error read PDF", JOptionPane.ERROR_MESSAGE);
         }
-
-        robdisplaybtn.setEnabled(true);
-        resetbtn.setEnabled(true);
     }
 
     private void importPdf(boolean reusefolder) {
