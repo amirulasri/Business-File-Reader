@@ -209,6 +209,15 @@ public class Home extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    NewRob robui;
+    private void openROBWindow() {
+        if (robui != null) {
+            robui.setVisible(true);
+        } else {
+            robui = new NewRob(bizzname, years, ownername, icnumber, phoneno, email, bizzaddress, bizzcategory, bentukperniagaan, cawangan, ssm, expirydate, entrymonth);
+            robui.setVisible(true);
+        }
+    }
     private String valueFinder(String keyword, File docs, boolean doubledot) throws IOException {
         PDDocument document = PDDocument.load(docs);
         PDFTextStripper stripper = new PDFTextStripper();
@@ -373,6 +382,7 @@ public class Home extends javax.swing.JFrame {
                         this.phoneno = phoneno;
 
                     }
+                    openROBWindow();
                     robdisplaybtn.setEnabled(true);
                     resetbtn.setEnabled(true);
 
@@ -408,13 +418,8 @@ public class Home extends javax.swing.JFrame {
         importPdf(false);
     }//GEN-LAST:event_openfolderbtnActionPerformed
 
-    NewRob robui;
     private void robdisplaybtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_robdisplaybtnActionPerformed
-        if (robui != null) {
-            robui.setVisible(true);
-        } else {
-            robui = new NewRob(bizzname, years, ownername, icnumber, phoneno, email, bizzaddress, bizzcategory, bentukperniagaan, cawangan, ssm, expirydate, entrymonth);
-        }
+        openROBWindow();
     }//GEN-LAST:event_robdisplaybtnActionPerformed
     public static int showConfirmationDialog(String message) {
         return JOptionPane.showConfirmDialog(null, message, "Clear files", JOptionPane.YES_NO_OPTION);
@@ -422,6 +427,7 @@ public class Home extends javax.swing.JFrame {
     private void resetbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetbtnActionPerformed
         robui.dispose();
         robui = null;
+        
 
         int result = showConfirmationDialog("Are you want to clear all files in selected folders?\nThis action can't be undone");
 
@@ -444,6 +450,9 @@ public class Home extends javax.swing.JFrame {
                 robdisplaybtn.setEnabled(false);
                 resetbtn.setEnabled(false);
             }
+        } else {
+            robdisplaybtn.setEnabled(false);
+            resetbtn.setEnabled(false);
         }
     }//GEN-LAST:event_resetbtnActionPerformed
 
